@@ -9,6 +9,8 @@ describe('login', function () {
     login.login("rknell@snappyapps.com.au", "ry1an234")
       .then(function (_agent) {
         agent = _agent;
+
+        console.log(agent.xeroCredentials);
         expect(agent).to.exist;
         done();
       })

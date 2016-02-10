@@ -2,7 +2,7 @@ var expect = require('chai').expect;
 var login = require('../lib/login');
 var loginInfo = require('../lib/loginInfo');
 
-var agent, companySearchResult
+var agent, organisations;
 
 describe('loginInfo', function () {
 
@@ -15,24 +15,27 @@ describe('loginInfo', function () {
       .catch(done);
   });
 
-  it('should should find a company', function (done) {
-    loginInfo.organisationSearch(agent, "Demo Company")
-      .then(function (result) {
-        console.log(result);
-        companySearchResult = result;
-        expect(result[0].name).to.exist;
-        done();
-      })
-      .catch(done)
-  });
-
-  it('should select a company', function (done) {
-    this.timeout(15000);
-    loginInfo.organisationSelect(agent, companySearchResult[0].organisationUrl)
+  it('should get a list of all organisations', function(done){
+    loginInfo.getOrganisations(agent)
       .then(function(result){
-        done()
+        organisations = result;
+        console.log(result);
+        done();
       })
       .catch(done);
   });
+
+  it('should get reference data', function(done){
+    this.timeout(4000);
+    loginInfo.getReferenceData(agent, organisations.demo.id)
+      .then(function(result){
+        expect(result.accounts).to.exist;
+        expect(result.contacts).to.exist;
+        expect(result.dashboardSummary).to.exist;
+        expect(result.taxCodes).to.exist;
+        done();
+      })
+      .catch(done);
+  })
 
 });
